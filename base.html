@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <head>
+    <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+    {% block head %} {% endblock %}
+  </head>
+  <body>
+    <p> Hello {{ user.nickname() }} <a href="{{ logout_url }}">logout</a></p>
+    {% block body %} {% endblock %}
+  </body>
+</html>
+{% endautoescape %}

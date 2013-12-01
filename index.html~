@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <head>
+    <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+  </head>
+  <body>
+    <p>{{ test3 }}</p>
+    <p> Hello {{ user.nickname() }} <a href="{{ logout_url }}">logout</a></p>
+    <hr>
+    <form name=robotForm method=post action="/save_robot">
+      <label>robot name</label>
+        <input name=robot_name type=text placeholder="robot_name"/><br>
+      <label>code</label><br>
+      <textarea name=robot_code></textarea><br>
+      <input type=submit value=save /><br>
+    </form>
+  </body>
+</html>
+{% endautoescape %}

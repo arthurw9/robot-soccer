@@ -1,0 +1,25 @@
+# test this with 
+# ~/programming/appengine/google_appengine/dev_appserver.py ~/programming/appengine/robotsoccer
+# then browse to http://localhost:8080
+#
+# deploy with
+# appcfg.py update ~/programming/appengine/robotsoccer
+
+application: your-app-id
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /stylesheets
+  static_dir: stylesheets
+
+- url: /.*
+  script: robotsoccer.application
+
+libraries:
+- name: webapp2
+  version: latest
+- name: jinja2
+  version: latest

@@ -1,0 +1,2 @@
+~/programming/appengine/google_appengine/dev_appserver.py ~/programming/appengine/robotsoccer
+echo "browse to http://localhost:8080"
