@@ -23,6 +23,7 @@ class Player(ndb.Model):
   player_name = ndb.StringProperty(indexed=True)
   program = ndb.StringProperty(indexed=False)
 
+
 class MainPage(webapp2.RequestHandler):
   
   def get(self):
@@ -36,6 +37,20 @@ class MainPage(webapp2.RequestHandler):
     template = JINJA_ENVIRONMENT.get_template('index.html')
     self.response.write(template.render(template_data));
   
+
+class NewRobot(webapp2.RequestHandler):
+  
+  def get(self):
+    user = users.get_current_user()
+    if not user:
+      self.redirect(users.create_login_url(self.request.uri));
+      return
+    template_data = {}
+    template_data['user'] = user;
+    template_data['logout_url'] = users.create_logout_url(self.request.uri)
+    template = JINJA_ENVIRONMENT.get_template('new_robot.html')
+    self.response.write(template.render(template_data));
+  
   def post(self):
     user = users.get_current_user()
     if not user:
@@ -47,9 +62,23 @@ class MainPage(webapp2.RequestHandler):
     p.put();
     self.redirect('/');
 
-      
+
+class ListRobots(webapp2.RequestHandler):
+  
+  def get(self):
+    user = users.get_current_user()
+    if not user:
+      self.redirect(users.create_login_url(self.request.uri));
+      return
+    template_data = {}
+    template_data['user'] = user;
+    template_data['logout_url'] = users.create_logout_url(self.request.uri)
+    template = JINJA_ENVIRONMENT.get_template('list_robots.html')
+    self.response.write(template.render(template_data));
+
+
 application = webapp2.WSGIApplication(
     [ ('/', MainPage),
-      ('/save_robot', MainPage),
-    ],
+      ('/list_robots', ListRobots),
+      ('/new_robot', NewRobot), ],
     debug=True)
