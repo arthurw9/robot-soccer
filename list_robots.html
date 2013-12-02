@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 {% block body %}
-  List Robots:...
-
+  Robots:
+  <table border=1><tr><th>player name</th><th>program</th></tr>
+  {% for p in robot_list %}
+    <tr><td>{{ p.player_name }}</td><td>{{ p.program }}</td></tr>
+  {% endfor %}
+  </table>
 {% endblock body %}

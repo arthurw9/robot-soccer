@@ -73,6 +73,9 @@ class ListRobots(webapp2.RequestHandler):
     template_data = {}
     template_data['user'] = user;
     template_data['logout_url'] = users.create_logout_url(self.request.uri)
+    robot_query = Player.query(ancestor=parent_key())
+    robot_list = robot_query.fetch()
+    template_data['robot_list'] = robot_list
     template = JINJA_ENVIRONMENT.get_template('list_robots.html')
     self.response.write(template.render(template_data));
 
