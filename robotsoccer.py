@@ -17,7 +17,6 @@ def parent_key():
   """Constructs a Datastore key for a user."""
   return ndb.Key('User', users.get_current_user().user_id())
 
-
 class Player(ndb.Model):
   """Models an individual Player in Robot Soccer."""
   player_name = ndb.StringProperty(indexed=True)
@@ -56,7 +55,7 @@ class NewRobot(webapp2.RequestHandler):
     if not user:
       self.redirect(users.create_login_url(self.request.uri));
       return
-    p = Player(parent=parent_key());
+    p = Player(id=self.request.get("robot_name"), parent=parent_key());
     p.player_name = self.request.get("robot_name");
     p.program = self.request.get("robot_code");
     p.put();
@@ -80,8 +79,37 @@ class ListRobots(webapp2.RequestHandler):
     self.response.write(template.render(template_data));
 
 
+class EditRobot(webapp2.RequestHandler):
+  
+  def get(self):
+    user = users.get_current_user()
+    if not user:
+      self.redirect(users.create_login_url(self.request.uri));
+      return
+    template_data = {}
+    template_data['user'] = user;
+    template_data['logout_url'] = users.create_logout_url(self.request.uri)
+    template = JINJA_ENVIRONMENT.get_template('edit_robot.html')
+    self.response.write(template.render(template_data));
+    
+
+class DeleteRobot(webapp2.RequestHandler):
+  
+  def get(self):
+    user = users.get_current_user()
+    if not user:
+      self.redirect(users.create_login_url(self.request.uri));
+      return
+    k = ndb.Key(urlsafe=self.request.get("k"))
+    k.delete();
+    self.redirect('/list_robots');
+
+
 application = webapp2.WSGIApplication(
     [ ('/', MainPage),
       ('/list_robots', ListRobots),
-      ('/new_robot', NewRobot), ],
+      ('/new_robot', NewRobot),
+      ('/edit', EditRobot),
+      ('/delete', DeleteRobot),
+    ],
     debug=True)

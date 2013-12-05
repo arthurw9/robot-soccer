@@ -1,18 +1,10 @@
 {% extends 'base.html' %}
 {% block body %}
-  <script>
-    function mouseDown(e) {
-      e = e || window.event;
-      if (e.which == 3) {
-        alert("right click!");
-      }
-      return true;
-    }
-  </script>
   Robots:
-  <table border=1><tr><th>player name</th><th>program</th></tr>
+  <table border=1><tr><th>player name</th><th>program</th><th>option</th></tr>
   {% for p in robot_list %}
-    <tr title="right click for edit or delete" onmousedown="return mouseDown(event);"><td>{{ p.player_name }}</td><td>{{ p.program }}</td></tr>
+    <tr><td>{{ p.player_name }}</td><td>{{ p.program }}</td>
+    <td><a href="/edit?k={{ p.key.urlsafe() }}">edit</a> <a href="/delete?k={{ p.key.urlsafe() }}">delete</a></td></tr>
   {% endfor %}
   </table>
 {% endblock body %}
