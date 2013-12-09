@@ -10,7 +10,7 @@
       <label>code</label>
     <dd>
       <textarea name=robot_code></textarea>
-      <input type=submit value=save />
     </dl>
+    <input type=submit value=save />
   </form>
 {% endblock body %}
