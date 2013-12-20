@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block body %}
+  Select Teams:<hr>
+  <form name=selectTeams method=post action="/play">
+    <table border=0>
+    <tr><th>Team Red</th><th>Team Blue</th></tr>
+    <tr><td>
+      <table border=0><tr><th>player Id</th><th>Player name</th></tr>
+        {% for player in red_team %}
+          <tr><td>{{ player }}</td><td><select name= {{ player }}>
+            {% for robot in robot_list %}
+              <option value='{{robot.player_name}}'>{{robot.player_name}}</option>
+            {% endfor %}
+          </select></td></tr>
+        {% endfor %}
+      </table>
+    </td><td>
+      <table border=0><tr><th>player Id</th><th>Player name</th></tr>
+        {% for player in blue_team %}
+          <tr><td>{{ player }}</td><td><select name= {{ player }}>
+            {% for robot in robot_list %}
+              <option value='{{robot.player_name}}'>{{robot.player_name}}</option>
+            {% endfor %}
+          </select></td></tr>
+        {% endfor %}
+      </table>
+    </td></tr>
+    <tr><td colspan=2><input type=submit value=Play /></td></tr>
+    <table>
+  </form>
+{% endblock body %}

@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% block body %}
+  <style type="text/css">
+  </style>
+  <svg id=soccer_field width=500 height=300 
+       style="background-color:white;">
+    {% for p in robots %}
+      <text x=0 y=150 id='{{ p }}'>{{ p }}</text>
+    {% endfor %}
+      <text x=200 y=100 id='O'>O</text>
+  </svg><br/>
+  <script>
+    function Robot(name) {
+      this.o = document.getElementById(name);
+      this.robots.push(this);
+    }
+    Robot.prototype.robots = []
+    // returns the first robots bounding box that intersects box
+    // only robots other than "this" robot are considered
+    // returns null if not found
+    Robot.prototype.HitsRobot = function(box) {
+      for (var i = 0; i < this.robots.length; i++) {
+        if (this.robots[i] == this) {
+          continue;
+        }
+        b2 = this.robots[i].o.getBBox();
+        if (b2.x > box.x + box.width - 1) {
+          continue;
+        }
+        if (b2.x + b2.width - 1 < box.x) {
+          continue;
+        }
+        if (b2.y > box.y + box.height - 1) {
+          continue;
+        }
+        if (b2.y + b2.height - 1 < box.y) {
+          continue;
+        }
+        console.log(this.o.getAttribute('id') + ' hit ' + 
+                    this.robots[i].o.getAttribute('id'));
+        return b2;
+      }
+      return null;
+    }
+    Robot.prototype.up = function() {
+      var amount_to_move = 10;
+      var b = this.o.getBBox();
+      var y = this.o.getAttribute('y');
+      var ty = b.y;
+      var baseline_correction = y - ty;
+      ty -= amount_to_move;
+      if (ty < 0) {
+        ty = 0;
+      }
+      b.y = ty;
+      b2 = this.HitsRobot(b);
+      if (b2 != null) {
+        ty = b2.y + b2.height;
+      }
+      this.o.setAttribute('y', ty + baseline_correction);
+    }
+    Robot.prototype.down = function() {
+      var amount_to_move = 10;
+      var b = this.o.getBBox();
+      var y = this.o.getAttribute('y');
+      var ty = b.y;
+      var baseline_correction = y - ty;
+      ty += amount_to_move;
+      if (ty + b.height - 1 > 300 - 1) {
+        ty = 300 - b.height;
+      }
+      b.y = ty;
+      b2 = this.HitsRobot(b);
+      if (b2 != null) {
+        ty = b2.y - b.height;
+      }
+      this.o.setAttribute('y', ty + baseline_correction);
+    }
+    Robot.prototype.left = function() {
+      var amount_to_move = 10;
+      var b = this.o.getBBox();
+      var x = this.o.getAttribute('x');
+      x -= amount_to_move;
+      if (x < 0) {
+        x = 0;
+      }
+      b.x = x;
+      b2 = this.HitsRobot(b);
+      if (b2 != null) {
+        x = b2.x + b2.width;
+      }
+      this.o.setAttribute('x', x);
+    }
+    Robot.prototype.right = function() {
+      var amount_to_move = 10;
+      var b = this.o.getBBox();
+      var x = this.o.getAttribute('x');
+      var x = parseInt(x);
+      x += amount_to_move;
+      if (x + b.width - 1 > 500 - 1) {
+        x = 500 - b.width;
+      }
+      b.x = x;
+      b2 = this.HitsRobot(b);
+      if (b2 != null) {
+        x = b2.x - b.width;
+      }
+      this.o.setAttribute('x', x);
+    }
+    Robot.prototype.getMyLocation = function() {
+      return this.o.getBBox();
+    }
+    Robot.prototype.getBallLocation = function() {
+      return document.getElementById('O').getBBox()
+    }
+  </script>
+  <script>
+    var timer_ticks = 0;
+    var interval_timer;
+    robots = {
+    {% for p in robots %}
+      '{{ p }}': new Robot('{{ p }}'),
+    {% endfor %}
+    };
+    function updateAll() {
+      {% for p in robots %}
+        robots['{{ p }}'].update();
+      {% endfor %}
+      timer_ticks = timer_ticks + 1;
+      if (timer_ticks > 1000) {
+        clearInterval(interval_timer);
+        console.log("All Stop");
+      }
+    }
+    interval_timer = setInterval(updateAll, 100);
+  </script>
+  {% for p in robots %}
+    <script>
+    robots['{{ p }}'].update = function() {
+      {{ robots[p].program }}
+    }
+    </script>
+  {% endfor %}
+  Robots:<br/>
+  {% for p in robots %}
+    {{ p }} {{ robots[p].player_name }}<br/>
+  {% endfor %}
+{% endblock body %}

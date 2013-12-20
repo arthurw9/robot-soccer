@@ -1,5 +1,3 @@
-import urllib
-
 from google.appengine.ext import ndb
 
 import db_helper

@@ -3,7 +3,7 @@ import webapp2
 import db_helper
 import webapp2_helper
 import edit_robots
-
+import play
 
 class MainPage(webapp2_helper.RequestHandler2):
   
@@ -19,6 +19,7 @@ application = webapp2.WSGIApplication(
       ('/edit', edit_robots.EditRobot),
       ('/save_robot', edit_robots.SaveRobot),
       ('/delete', edit_robots.DeleteRobot),
-      ('/play', MainPage),
+      ('/select_team', play.SelectTeam),
+      ('/play', play.Play),
     ],
     debug=True)
