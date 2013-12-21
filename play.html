@@ -14,108 +14,241 @@
       this.o = document.getElementById(name);
       this.robots.push(this);
     }
-    Robot.prototype.robots = []
-    // returns the first robots bounding box that intersects box
-    // only robots other than "this" robot are considered
+    Robot.prototype.robots = [];
+    // returns true if the boxes intersect
+    function BoxesIntersect(b1, b2) {
+      if (b2.x > b1.x + b1.width - 1) {
+        return false;
+      }
+      if (b2.x + b2.width - 1 < b1.x) {
+        return false;
+      }
+      if (b2.y > b1.y + b1.height - 1) {
+        return false;
+      }
+      if (b2.y + b2.height - 1 < b1.y) {
+        return false;
+      }
+      return true;
+    }
+    // returns the first robot that intersects box
+    // only robots other than "exclude" are considered
     // returns null if not found
-    Robot.prototype.HitsRobot = function(box) {
-      for (var i = 0; i < this.robots.length; i++) {
-        if (this.robots[i] == this) {
+    HitsRobotExcluding = function(box, exclude) {
+      var robots = Robot.prototype.robots;
+      for (var i = 0; i < robots.length; i++) {
+        var robot = robots[i];
+        if (robot == exclude) {
           continue;
         }
-        b2 = this.robots[i].o.getBBox();
-        if (b2.x > box.x + box.width - 1) {
+        var b2 = robot.o.getBBox();
+        if (!BoxesIntersect(b2, box)) {
           continue;
         }
-        if (b2.x + b2.width - 1 < box.x) {
-          continue;
-        }
-        if (b2.y > box.y + box.height - 1) {
-          continue;
-        }
-        if (b2.y + b2.height - 1 < box.y) {
-          continue;
-        }
-        console.log(this.o.getAttribute('id') + ' hit ' + 
-                    this.robots[i].o.getAttribute('id'));
-        return b2;
+        return robot;
       }
       return null;
     }
+    // returns the first bounding box of any robot that intersects box
+    // only robots other than "this" are considered
+    // returns null if not found
+    Robot.prototype.HitsRobot = function(box) {
+      var r = HitsRobotExcluding(box, this);
+      if (r == null) {
+        return null;
+      }
+      console.log(this.o.getAttribute('id') + ' hit ' + 
+                  r.o.getAttribute('id'));
+      return r.o.getBBox();
+    }
     Robot.prototype.up = function() {
       var amount_to_move = 10;
-      var b = this.o.getBBox();
-      var y = this.o.getAttribute('y');
-      var ty = b.y;
-      var baseline_correction = y - ty;
-      ty -= amount_to_move;
-      if (ty < 0) {
-        ty = 0;
+      var myBox = this.o.getBBox();
+      var baseline_correction = parseInt(this.o.getAttribute('y')) - myBox.y;
+      myBox.y -= amount_to_move;
+      if (myBox.y < 0) {
+        myBox.y = 0;
       }
-      b.y = ty;
-      b2 = this.HitsRobot(b);
+      var b2 = this.HitsRobot(myBox);
       if (b2 != null) {
-        ty = b2.y + b2.height;
+        myBox.y = b2.y + b2.height;
       }
-      this.o.setAttribute('y', ty + baseline_correction);
+      var ballBox = BALL.up(this, myBox);
+      if (ballBox != null) {
+        myBox.y = ballBox.y + ballBox.height;
+      }
+      this.o.setAttribute('y', myBox.y + baseline_correction);
     }
     Robot.prototype.down = function() {
       var amount_to_move = 10;
-      var b = this.o.getBBox();
-      var y = this.o.getAttribute('y');
-      var ty = b.y;
-      var baseline_correction = y - ty;
-      ty += amount_to_move;
-      if (ty + b.height - 1 > 300 - 1) {
-        ty = 300 - b.height;
+      var myBox = this.o.getBBox();
+      var baseline_correction = parseInt(this.o.getAttribute('y')) - myBox.y;
+      myBox.y += amount_to_move;
+      if (myBox.y + myBox.height - 1 > 300 - 1) {
+        myBox.y = 300 - myBox.height;
       }
-      b.y = ty;
-      b2 = this.HitsRobot(b);
+      b2 = this.HitsRobot(myBox);
       if (b2 != null) {
-        ty = b2.y - b.height;
+        myBox.y = b2.y - myBox.height;
       }
-      this.o.setAttribute('y', ty + baseline_correction);
+      var ballBox = BALL.down(this, myBox);
+      if (ballBox != null) {
+        myBox.y = ballBox.y - myBox.height;
+      }
+      this.o.setAttribute('y', myBox.y + baseline_correction);
     }
     Robot.prototype.left = function() {
       var amount_to_move = 10;
-      var b = this.o.getBBox();
-      var x = this.o.getAttribute('x');
-      x -= amount_to_move;
-      if (x < 0) {
-        x = 0;
+      var myBox = this.o.getBBox();
+      myBox.x -= amount_to_move;
+      if (myBox.x < 0) {
+        myBox.x = 0;
       }
-      b.x = x;
-      b2 = this.HitsRobot(b);
+      b2 = this.HitsRobot(myBox);
       if (b2 != null) {
-        x = b2.x + b2.width;
+        myBox.x = b2.x + b2.width;
       }
-      this.o.setAttribute('x', x);
+      var ballBox = BALL.left(this, myBox);
+      if (ballBox != null) {
+        myBox.x = ballBox.x + ballBox.width;
+      }
+      this.o.setAttribute('x', myBox.x);
     }
     Robot.prototype.right = function() {
       var amount_to_move = 10;
-      var b = this.o.getBBox();
-      var x = this.o.getAttribute('x');
-      var x = parseInt(x);
-      x += amount_to_move;
-      if (x + b.width - 1 > 500 - 1) {
-        x = 500 - b.width;
+      var myBox = this.o.getBBox();
+      myBox.x += amount_to_move;
+      if (myBox.x + myBox.width > 500) {
+        myBox.x = 500 - myBox.width;
       }
-      b.x = x;
-      b2 = this.HitsRobot(b);
+      b2 = this.HitsRobot(myBox);
       if (b2 != null) {
-        x = b2.x - b.width;
+        myBox.x = b2.x - myBox.width;
       }
-      this.o.setAttribute('x', x);
+      var ballBox = BALL.right(this, myBox);
+      if (ballBox != null) {
+        myBox.x = ballBox.x - myBox.width;
+      }
+      this.o.setAttribute('x', myBox.x);
     }
-    Robot.prototype.getMyLocation = function() {
+    // Note: this works because we never set the position with the values
+    // returned from here (otherwise it would be missing baseline_correction.
+    // This is only for comparison to other locations.
+    Robot.prototype.getLocation = function() {
       return this.o.getBBox();
     }
-    Robot.prototype.getBallLocation = function() {
-      return document.getElementById('O').getBBox()
+    function Ball() {
+      this.o = document.getElementById('O');
+    }
+    Ball.prototype.getLocation = function() {
+      return this.o.getBBox();
+    }
+    var BALL = new Ball();
+    // Tell the ball robot wants to move to newRobotBox so the ball can move.
+    // returns the (possibly new) bounding box of the ball if it blocks motion.
+    // returns null if the ball is not in the way or moves freely.
+    Ball.prototype.up = function(robot, newRobotBox) {
+      var ballBox = this.o.getBBox();
+      var baseline_correction = parseInt(this.o.getAttribute('y')) - ballBox.y;
+      if (!BoxesIntersect(ballBox, newRobotBox)) {
+        return null;
+      }
+      console.log(robot.o.getAttribute('id') + ' hit the ball');
+      // move ballBox up
+      ballBox.y = newRobotBox.y - ballBox.height;
+      if (ballBox.y < 0) {
+        ballBox.y = 0;
+      }
+      var r2 = HitsRobotExcluding(ballBox, robot);
+      if (r2 != null) {
+        ballBox.y = r2.y + r2.height;
+      }
+      this.o.setAttribute('y', ballBox.y + baseline_correction)
+      if (ballBox.y != newRobotBox.y - ballBox.height) {
+        return ballBox;
+      }
+      return null;
+    }
+    // Tell the ball robot wants to move to newRobotBox so the ball can move.
+    // returns the (possibly new) bounding box of the ball if it blocks motion.
+    // returns null if the ball is not in the way or moves freely.
+    Ball.prototype.down = function(robot, newRobotBox) {
+      var ballBox = this.o.getBBox();
+      var baseline_correction = parseInt(this.o.getAttribute('y')) - ballBox.y;
+      if (!BoxesIntersect(ballBox, newRobotBox)) {
+        return null;
+      }
+      console.log(robot.o.getAttribute('id') + ' hit the ball');
+      // move ballBox down
+      ballBox.y = newRobotBox.y - newRobotBox.height;
+      if (ballBox.y + ballBox.height > 300) {
+        ballBox.y = 300 - ballBox.height;
+      }
+      var r2 = HitsRobotExcluding(ballBox, robot);
+      if (r2 != null) {
+        ballBox.y = r2.y - ballBox.height;
+      }
+      this.o.setAttribute('y', ballBox.y + baseline_correction)
+      if (ballBox.y != newRobotBox.y - newRobotBox.height) {
+        return ballBox;
+      }
+      return null;
+    }
+    // Tell the ball robot wants to move to newRobotBox so the ball can move.
+    // returns the (possibly new) bounding box of the ball if it blocks motion.
+    // returns null if the ball is not in the way or moves freely.
+    Ball.prototype.left = function(robot, newRobotBox) {
+      var ballBox = this.o.getBBox();
+      if (!BoxesIntersect(ballBox, newRobotBox)) {
+        return null;
+      }
+      console.log(robot.o.getAttribute('id') + ' hit the ball');
+      // move ballBox left
+      ballBox.x = newRobotBox.x - ballBox.width;
+      if (ballBox.x < 0) {
+        ballBox.x = 0;
+      }
+      var r2 = HitsRobotExcluding(ballBox, robot);
+      if (r2 != null) {
+        ballBox.x = r2.x + r2.width;
+      }
+      this.o.setAttribute('x', ballBox.x)
+      if (ballBox.x != newRobotBox.x - ballBox.width) {
+        return ballBox;
+      }
+      return null;
+    }
+    // Tell the ball robot wants to move to newRobotBox so the ball can move.
+    // returns the (possibly new) bounding box of the ball if it blocks motion.
+    // returns null if the ball is not in the way or moves freely.
+    Ball.prototype.right = function(robot, newRobotBox) {
+      var ballBox = this.o.getBBox();
+      if (!BoxesIntersect(ballBox, newRobotBox)) {
+        return null;
+      }
+      console.log(robot.o.getAttribute('id') + ' hit the ball');
+      // move ballBox right
+      ballBox.x = newRobotBox.x + newRobotBox.width;
+      if (ballBox.x + ballBox.width > 500) {
+        ballBox.x = 500 - ballBox.width;
+      }
+      var r2 = HitsRobotExcluding(ballBox, robot);
+      if (r2 != null) {
+        ballBox.x = r2.x - ballBox.width;
+      }
+      this.o.setAttribute('x', ballBox.x)
+      if (ballBox.x != newRobotBox.x + newRobotBox.width) {
+        return ballBox;
+      }
+      return null;
     }
   </script>
   <script>
-    var timer_ticks = 0;
+    // Maximum of 3 minutes per game
+    var max_millis_per_game = 1000 * 60 * 3;
+    var millis_per_update = 100;
+    var timer_millis = 0;
+    var timer_tick = 0;
     var interval_timer;
     robots = {
     {% for p in robots %}
@@ -126,19 +259,29 @@
       {% for p in robots %}
         robots['{{ p }}'].update();
       {% endfor %}
-      timer_ticks = timer_ticks + 1;
-      if (timer_ticks > 1000) {
-        clearInterval(interval_timer);
-        console.log("All Stop");
+      updateTimer();
+    }
+    function updateTimer() {
+      timer_millis = timer_millis + millis_per_update;
+      timer_tick = timer_tick + 1;
+      if (timer_millis > max_millis_per_game) {
+        stopGame("Game timed out.");
       }
     }
-    interval_timer = setInterval(updateAll, 100);
+    interval_timer = setInterval(updateAll, millis_per_update);
+    function stopGame(message) {
+      clearInterval(interval_timer);
+      console.log(message);
+      console.log("game stopped.");
+    }
   </script>
   {% for p in robots %}
     <script>
-    robots['{{ p }}'].update = function() {
-      {{ robots[p].program }}
-    }
+      robots['{{ p }}'].update = function() {
+        {% autoescape false %}
+          {{ robots[p].program }}
+        {% endautoescape %}
+      }
     </script>
   {% endfor %}
   Robots:<br/>

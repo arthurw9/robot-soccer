@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block body %}
-  <form name=robotForm method=post action="/new_robot">
+  <form name=robotForm method=post action="/save_robot">
     <dl>
     <dt>
       <label>robot name</label>

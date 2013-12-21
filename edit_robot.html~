@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block body %}
-  <form name=robotForm method=post action="/new_robot">
+  <form name=robotForm method=post action="/save_robot">
     <dl>
     <dt>
       <label>robot name</label>
@@ -10,7 +10,7 @@
     <dt>
       <label>code</label>
     <dd>
-      <textarea name=robot_code>{{ player.program}}</textarea>
+<textarea rows=20 cols=65 name=robot_code>{{ player.program }}</textarea>
     </dl>
     <input type=submit value=save />
   </form>

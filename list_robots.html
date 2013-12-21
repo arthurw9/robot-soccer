@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block body %}
   Robots:
-  <table border=1><tr><th>player name</th><th>program</th><th>option</th></tr>
+  <table border=1><tr><th>player name</th><th>option</th></tr>
   {% for p in robot_list %}
-    <tr><td>{{ p.player_name }}</td><td>{{ p.program }}</td>
+    <tr><td>{{ p.player_name }}</td>
     <td><a href="/edit?k={{ p.key.urlsafe() }}">edit</a> <a href="/delete?k={{ p.key.urlsafe() }}">delete</a></td></tr>
   {% endfor %}
   </table>
