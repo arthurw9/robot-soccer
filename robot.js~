@@ -189,7 +189,7 @@ Ball.prototype.down = function(robot, newRobotBox) {
   }
   console.log(robot.o.getAttribute('id') + ' hit the ball');
   // move ballBox down
-  ballBox.y = newRobotBox.y - newRobotBox.height;
+  ballBox.y = newRobotBox.y + newRobotBox.height;
   if (ballBox.y + ballBox.height > {{ game_height }}) {
     ballBox.y = {{ game_height }} - ballBox.height;
   }
