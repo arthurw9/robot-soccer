@@ -2,12 +2,23 @@
 {% block body %}
   <style type="text/css">
   </style>
-  <svg id=soccer_field width=500 height=300 
+  {% set game_width = 500 %}
+  {% set game_height = 300 %}
+  <svg id=soccer_field width={{ game_width }} height={{ game_height }} 
        style="background-color:white;">
-    {% for p in robots %}
-      <text x=0 y=150 id='{{ p }}'>{{ p }}</text>
-    {% endfor %}
-      <text x=200 y=100 id='O'>O</text>
+
+    <rect x=20 y=130 height=40 width=10 fill=red />
+    <rect x=460 y=130 height=40 width=10 fill=blue />
+
+    <text x=50 y=50 id='R1'>R1</text>
+    <text x=50 y=150 id='R2'>R2</text>
+    <text x=50 y=250 id='R3'>R3</text>
+
+    <text x=430 y=50 id='B1'>B1</text>
+    <text x=430 y=150 id='B2'>B2</text>
+    <text x=430 y=250 id='B3'>B3</text>
+    
+    <text x=244 y=150 id='O'>O</text>
   </svg><br/>
   <script>
     function Robot(name) {
@@ -34,7 +45,7 @@
     // returns the first robot that intersects box
     // only robots other than "exclude" are considered
     // returns null if not found
-    HitsRobotExcluding = function(box, exclude) {
+    function HitsRobotExcluding(box, exclude) {
       var robots = Robot.prototype.robots;
       for (var i = 0; i < robots.length; i++) {
         var robot = robots[i];
@@ -84,8 +95,8 @@
       var myBox = this.o.getBBox();
       var baseline_correction = parseInt(this.o.getAttribute('y')) - myBox.y;
       myBox.y += amount_to_move;
-      if (myBox.y + myBox.height - 1 > 300 - 1) {
-        myBox.y = 300 - myBox.height;
+      if (myBox.y + myBox.height > {{ game_height }}) {
+        myBox.y = {{ game_height }} - myBox.height;
       }
       b2 = this.HitsRobot(myBox);
       if (b2 != null) {
@@ -118,8 +129,8 @@
       var amount_to_move = 10;
       var myBox = this.o.getBBox();
       myBox.x += amount_to_move;
-      if (myBox.x + myBox.width > 500) {
-        myBox.x = 500 - myBox.width;
+      if (myBox.x + myBox.width > {{ game_width }}) {
+        myBox.x = {{ game_width }} - myBox.width;
       }
       b2 = this.HitsRobot(myBox);
       if (b2 != null) {
@@ -161,7 +172,7 @@
       }
       var r2 = HitsRobotExcluding(ballBox, robot);
       if (r2 != null) {
-        ballBox.y = r2.y + r2.height;
+        ballBox.y = r2.o.getBBox().y + r2.o.getBBox().height;
       }
       this.o.setAttribute('y', ballBox.y + baseline_correction)
       if (ballBox.y != newRobotBox.y - ballBox.height) {
@@ -181,12 +192,12 @@
       console.log(robot.o.getAttribute('id') + ' hit the ball');
       // move ballBox down
       ballBox.y = newRobotBox.y - newRobotBox.height;
-      if (ballBox.y + ballBox.height > 300) {
-        ballBox.y = 300 - ballBox.height;
+      if (ballBox.y + ballBox.height > {{ game_height }}) {
+        ballBox.y = {{ game_height }} - ballBox.height;
       }
       var r2 = HitsRobotExcluding(ballBox, robot);
       if (r2 != null) {
-        ballBox.y = r2.y - ballBox.height;
+        ballBox.y = r2.o.getBBox().y - ballBox.height;
       }
       this.o.setAttribute('y', ballBox.y + baseline_correction)
       if (ballBox.y != newRobotBox.y - newRobotBox.height) {
@@ -210,7 +221,7 @@
       }
       var r2 = HitsRobotExcluding(ballBox, robot);
       if (r2 != null) {
-        ballBox.x = r2.x + r2.width;
+        ballBox.x = r2.o.getBBox().x + r2.o.getBBox().width;
       }
       this.o.setAttribute('x', ballBox.x)
       if (ballBox.x != newRobotBox.x - ballBox.width) {
@@ -229,12 +240,12 @@
       console.log(robot.o.getAttribute('id') + ' hit the ball');
       // move ballBox right
       ballBox.x = newRobotBox.x + newRobotBox.width;
-      if (ballBox.x + ballBox.width > 500) {
-        ballBox.x = 500 - ballBox.width;
+      if (ballBox.x + ballBox.width > {{ game_width }}) {
+        ballBox.x = {{ game_width }} - ballBox.width;
       }
       var r2 = HitsRobotExcluding(ballBox, robot);
       if (r2 != null) {
-        ballBox.x = r2.x - ballBox.width;
+        ballBox.x = r2.o.getBBox().x - ballBox.width;
       }
       this.o.setAttribute('x', ballBox.x)
       if (ballBox.x != newRobotBox.x + newRobotBox.width) {
@@ -246,7 +257,7 @@
   <script>
     // Maximum of 3 minutes per game
     var max_millis_per_game = 1000 * 60 * 3;
-    var millis_per_update = 100;
+    var millis_per_update = 200;
     var timer_millis = 0;
     var timer_tick = 0;
     var interval_timer;
@@ -256,9 +267,12 @@
     {% endfor %}
     };
     function updateAll() {
-      {% for p in robots %}
-        robots['{{ p }}'].update();
-      {% endfor %}
+      robots['R1'].update();
+      robots['B1'].update();
+      robots['R2'].update();
+      robots['B2'].update();
+      robots['R3'].update();
+      robots['B3'].update();
       updateTimer();
     }
     function updateTimer() {

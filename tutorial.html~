@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block body %}
+  <h2>Tutorial</h2>
+Here are some sample robots:
+<hr>
+<code>
+// ChaseBall
+if (timer_tick % 2 == 0) {
+  if (this.getLocation().x < BALL.getLocation().x) {
+    this.right();
+  } else {
+    this.left();
+  }
+} else {
+  if (this.getLocation().y < BALL.getLocation().y) {
+    this.down();
+  } else {
+    this.up();
+  }
+}
+</code>
+<hr>
+<code><pre>
+// random
+var dir = Math.floor((Math.random()*4)+1);
+if (dir == 1) {
+  this.up();
+} else if (dir == 2) {
+  this.down();
+} else if (dir == 3) {
+  this.left();
+} else {
+  this.right();
+}</pre></code>
+{% endblock body %}
