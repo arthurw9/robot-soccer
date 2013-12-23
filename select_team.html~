@@ -11,7 +11,8 @@
             {% for robot in robot_list %}
               <option value='{{robot.player_name}}'>{{robot.player_name}}</option>
             {% endfor %}
-          </select></td></tr>
+           <option value='Human'>Human</option>
+           </select></td></tr>
         {% endfor %}
       </table>
     </td><td>

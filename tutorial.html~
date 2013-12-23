@@ -3,7 +3,7 @@
   <h2>Tutorial</h2>
 Here are some sample robots:
 <hr>
-<code>
+<pre><code>
 // ChaseBall
 if (timer_tick % 2 == 0) {
   if (this.getLocation().x < BALL.getLocation().x) {
@@ -18,7 +18,7 @@ if (timer_tick % 2 == 0) {
     this.up();
   }
 }
-</code>
+</pre></code>
 <hr>
 <code><pre>
 // random
@@ -32,4 +32,67 @@ if (dir == 1) {
 } else {
   this.right();
 }</pre></code>
+<hr>
+<code><pre>
+// ChaseRobotB1 (or any other robot or the ball)
+function chase(target) {
+  if (timer_tick % 2 == 0) {
+    if (this.getLocation().x < target.getLocation().x) {
+      this.right();
+    } else {
+      this.left();
+    }
+  } else {
+    if (this.getLocation().y < target.getLocation().y) {
+      this.down();
+    } else {
+      this.up();
+    }
+  }
+}
+chase.call(this, Robot.B1);
+// note: you could also try:
+// chase.call(this, BALL);
+</pre></code>
+<hr>
+<code><pre>
+function chase(target) {
+  if (timer_tick % 2 == 0) {
+    if (this.getLocation().x < target.getLocation().x) {
+      this.right();
+    } else {
+      this.left();
+    }
+  } else {
+    if (this.getLocation().y < target.getLocation().y) {
+      this.down();
+    } else {
+      this.up();
+    }
+  }
+}
+if (this.state != 2) {
+  this.state = 1;
+}
+if (this.state == 1) {
+  chase.call(this, BALL);
+  if (BoxesTouching(this.o.getBBox(), BALL.o.getBBox())) {
+    this.state = 2;
+  }
+  return;
+}
+if (this.state == 2) {
+  var dir = Math.floor((Math.random()*4)+1);
+  if (dir == 1) {
+    this.up();
+  } else if (dir == 2) {
+    this.down();
+  } else if (dir == 3) {
+    this.left();
+  } else {
+    this.right();
+  }
+  return;
+}
+</pre></code>
 {% endblock body %}

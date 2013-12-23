@@ -78,8 +78,17 @@
       }
     </script>
   {% endfor %}
-  Robots:<br/>
-  {% for p in robots %}
-    {{ p }} {{ robots[p].player_name }}<br/>
-  {% endfor %}
+  <dl><dt>Robots:
+  <dd>
+  <table><tr>
+    <td>
+      R1 = {{ robots['R1'].player_name }}<br/>
+      R2 = {{ robots['R2'].player_name }}<br/>
+      R3 = {{ robots['R3'].player_name }}<br/>
+    </td><td>&nbsp;&nbsp;&nbsp;</td><td>
+      B1 = {{ robots['B1'].player_name }}<br/>
+      B2 = {{ robots['B2'].player_name }}<br/>
+      B3 = {{ robots['B3'].player_name }}<br/>
+    </td>
+  </tr></table>
 {% endblock body %}

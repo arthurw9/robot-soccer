@@ -23,7 +23,11 @@ class Play(webapp2_helper.RequestHandler2):
     for r in [ t + str(x) for t in ['R', 'B'] for x in [1,2,3] ]:
       p = db_helper.Player(id=self.request.get(r),
                            parent=db_helper.parent_key());
-      p = p.key.get()
+      if self.request.get(r) == 'Human':
+        p.player_name = 'Human'
+        p.program = 'humanUpdate.call(this);'
+      else:
+        p = p.key.get()
       robots[r] = p;
     template_data['robots'] = robots
     template = webapp2_helper.JINJA_ENVIRONMENT.get_template('play.html')

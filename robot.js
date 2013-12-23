@@ -311,3 +311,26 @@ Ball.prototype.right = function(robot, newRobotBox) {
   }
   return null;
 }
+
+var humanMoveQueue = [];
+
+document.onkeydown = function (e) {
+  e = e || window.event;
+  humanMoveQueue[0] = e['keyIdentifier'];
+  return false;
+};
+function humanUpdate() {
+  var move = humanMoveQueue.shift();
+  if (move == "Up") {
+    this.up();
+  }
+  if (move == "Down") {
+    this.down();
+  }
+  if (move == "Left") {
+    this.left();
+  }
+  if (move == "Right") {
+    this.right();
+  }
+}
