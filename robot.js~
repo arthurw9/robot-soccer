@@ -70,6 +70,66 @@ Robot.prototype.HitsRobot = function(box) {
               r.o.getAttribute('id'));
   return r.o.getBBox();
 }
+// returns true if the top of this Robot is touching other.
+Robot.prototype.touchingUp = function(other) {
+  var myBox = this.o.getBBox();
+  var otherBox = other.o.getBBox();
+  if (myBox.y == otherBox.y + otherBox.height) {
+    if (myBox.x > otherBox.x + otherBox.width) {
+      return false;
+    }
+    if (myBox.x < otherBox.x - myBox.width) {
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+// returns true if the left of this Robot is touching other.
+Robot.prototype.touchingleft = function(other) {
+  var myBox = this.o.getBBox();
+  var otherBox = other.o.getBBox();
+  if (myBox.x == otherBox.x + otherBox.width) {
+    if (myBox.y > otherBox.y + otherBox.height) {
+      return false;
+    }
+    if (myBox.y < otherBox.y - myBox.height) {
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+// returns true if the bottom of this Robot is touching other.
+Robot.prototype.touchingDown = function(other) {
+  var myBox = this.o.getBBox();
+  var otherBox = other.o.getBBox();
+  if (myBox.y == otherBox.y - myBox.height) {
+    if (myBox.x > otherBox.x + otherBox.width) {
+      return false;
+    }
+    if (myBox.x < otherBox.x - myBox.width) {
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+// returns true if the right of this Robot is touching other.
+Robot.prototype.touchingRight = function(other) {
+  var myBox = this.o.getBBox();
+  var otherBox = other.o.getBBox();
+  if (myBox.x == otherBox.x - myBox.width) {
+    if (myBox.y > otherBox.y + otherBox.height) {
+      return false;
+    }
+    if (myBox.y < otherBox.y - myBox.height) {
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
 Robot.prototype.up = function() {
   var amount_to_move = 10;
   var myBox = this.o.getBBox();
@@ -198,7 +258,7 @@ Ball.prototype.down = function(robot, newRobotBox) {
     ballBox.y = r2.o.getBBox().y - ballBox.height;
   }
   this.o.setAttribute('y', ballBox.y + baseline_correction)
-  if (ballBox.y != newRobotBox.y - newRobotBox.height) {
+  if (ballBox.y != newRobotBox.y + newRobotBox.height) {
     return ballBox;
   }
   return null;
