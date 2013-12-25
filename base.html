@@ -11,14 +11,14 @@
     <td align=right>{{ user.nickname() }} <a href="{{ logout_url }}">logout</a></td>
     </tr></table>
     <hr>
-    <table><tr><td valign='top' style="border-right: 1px solid black; padding: 5px;">
+    <table><tr><td width=15% valign='top' style="border-right: 1px solid black; padding: 5px;">
       <a href="/">Home</a><br>
       <a href="/tutorial">Tutorial</a><br>
       <a href="/list_robots">List Robots</a><br>
       <a href="/new_robot">New Robot</a><br>
       <a href="/select_team">Play Game</a><br>
     </td>
-    <td valign='top'>{% block body %} {% endblock %}</td>
+    <td valign='top' width=85%>{% block body %} {% endblock %}</td>
     </tr></table>
   </body>
 </html>
